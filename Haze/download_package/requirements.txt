@@ -1,0 +1,4 @@
+flask
+googletrans
+requests
+gunicorn

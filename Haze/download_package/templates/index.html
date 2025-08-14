@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cross-Language Phonetic Hazer</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+    <div class="container py-4">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="display-4 text-center mb-2">
+                    <i class="bi bi-translate me-2"></i>
+                    Cross-Language Phonetic Hazer
+                </h1>
+                <p class="lead text-center text-muted">
+                    Transform text between languages using phonetic similarity and fuzzing algorithms
+                </p>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        <i class="bi bi-{{ 'exclamation-triangle' if category == 'error' else 'info-circle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Input Form -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-keyboard me-2"></i>
+                            Text Input
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/">
+                            <!-- Language Selection -->
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="lang_a" class="form-label">Source Language:</label>
+                                    <select class="form-select" id="lang_a" name="lang_a" required>
+                                        {% if languages %}
+                                            {% for key, value in languages.items() %}
+                                                <option value="{{ key }}" {{ 'selected' if lang_a == key else '' }}>{{ value }}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value="english" selected>English</option>
+                                            <option value="spanish">Spanish</option>
+                                            <option value="french">French</option>
+                                            <option value="german">German</option>
+                                            <option value="italian">Italian</option>
+                                            <option value="portuguese">Portuguese</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lang_b" class="form-label">Bridge Language:</label>
+                                    <select class="form-select" id="lang_b" name="lang_b" required>
+                                        {% if languages %}
+                                            {% for key, value in languages.items() %}
+                                                <option value="{{ key }}" {{ 'selected' if lang_b == key else '' }}>{{ value }}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value="english">English</option>
+                                            <option value="spanish" selected>Spanish</option>
+                                            <option value="french">French</option>
+                                            <option value="german">German</option>
+                                            <option value="italian">Italian</option>
+                                            <option value="portuguese">Portuguese</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Hidden method field set to hybrid -->
+                            <input type="hidden" name="method" value="hybrid">
+                            
+                            <!-- Text Input -->
+                            <div class="mb-3">
+                                <label for="input_text" class="form-label">Enter text to transform:</label>
+                                <textarea 
+                                    class="form-control" 
+                                    id="input_text" 
+                                    name="input_text" 
+                                    rows="4" 
+                                    placeholder="Enter your text here for cross-language phonetic transformation..."
+                                    maxlength="5000"
+                                    required>{{ input_text if input_text else '' }}</textarea>
+                                <div class="form-text">
+                                    Maximum 5,000 characters. Text will be transformed: Source → Bridge → Source using phonetic similarity.
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-arrow-left-right me-2"></i>
+                                    Transform Text
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        {% if results %}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-graph-up me-2"></i>
+                            Phonetic Analysis Results
+                        </h5>
+                        <small class="text-muted">
+                            {{ results.word_count }} words processed
+                        </small>
+                    </div>
+                    <div class="card-body">
+                        {% if results.error %}
+                            <div class="alert alert-danger">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                {{ results.error }}
+                            </div>
+                        {% else %}
+                            <!-- Transformed Text Result -->
+                            {% if results.transformed_text %}
+                            <div class="alert alert-success mb-4">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="alert-heading mb-2">
+                                            <i class="bi bi-check-circle me-2"></i>
+                                            Transformed Text:
+                                        </h6>
+                                        <p class="mb-2 fs-5 font-monospace">{{ results.transformed_text }}</p>
+                                        <small class="text-muted">
+                                            <i class="bi bi-arrow-right me-1"></i>
+                                            {{ results.language_route }}
+                                        </small>
+                                    </div>
+                                    <button class="btn btn-outline-success btn-sm" onclick="copyToClipboard('{{ results.transformed_text }}')">
+                                        <i class="bi bi-clipboard"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Summary Statistics -->
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <div class="card bg-secondary">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">Total Transformations</h6>
+                                            <h4 class="text-primary">{{ results.summary.total_variations }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-secondary">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">Words Processed</h6>
+                                            <h4 class="text-success">{{ results.word_count }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card bg-secondary">
+                                        <div class="card-body text-center">
+                                            <h6 class="card-title">Avg. Similarity</h6>
+                                            <h4 class="text-info">{{ "%.1f%%" | format(results.summary.avg_similarity * 100) }}</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Word-by-Word Results -->
+                            <div class="row">
+                                {% for word_result in results.processed_words %}
+                                <div class="col-lg-6 mb-4">
+                                    <div class="card h-100">
+                                        <div class="card-header">
+                                            <h6 class="mb-0">
+                                                <i class="bi bi-quote me-1"></i>
+                                                "{{ word_result.original }}"
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="variations-list">
+                                                {% for variation in word_result.variations %}
+                                                <div class="variation-item mb-2 p-2 rounded" style="background-color: var(--bs-gray-800);">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="variation-text font-monospace">{{ variation.text }}</span>
+                                                        <div class="metrics">
+                                                            <span class="badge bg-{{ 'success' if variation.confidence == 'Original' else 'primary' if variation.confidence == 'High' else 'warning' if variation.confidence == 'Medium' else 'secondary' }} me-1">
+                                                                {{ variation.confidence }}
+                                                            </span>
+                                                            <small class="text-muted">{{ "%.1f%%" | format(variation.similarity * 100) }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                                {% if word_result.transformation_chain %}
+                                                <div class="mt-2 pt-2 border-top">
+                                                    <small class="text-muted">
+                                                        <i class="bi bi-arrow-right me-1"></i>
+                                                        <strong>Chain:</strong> {{ word_result.transformation_chain }}
+                                                    </small>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- About Section -->
+        {% if not results %}
+        <div class="row mt-5">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title mb-0">
+                            <i class="bi bi-info-circle me-2"></i>
+                            How It Works
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-arrow-left-right me-2 text-primary"></i>Cross-Language Transformation</h6>
+                                <p class="text-muted small">
+                                    Transforms text through a bridge language using phonetic rules: Source → Bridge → Source. 
+                                    This process reveals hidden phonetic similarities across languages.
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-gear-fill me-2 text-success"></i>Hybrid Method</h6>
+                                <p class="text-muted small">
+                                    Uses smart hybrid processing that combines phonetic transformation 
+                                    with translation fallback for optimal cross-language results.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-globe me-2 text-info"></i>Language Support</h6>
+                                <p class="text-muted small">
+                                    Works with major languages including English, Spanish, French, German, 
+                                    Italian, and Portuguese with automatic language detection.
+                                </p>
+                            </div>
+                            <div class="col-md-6">
+                                <h6><i class="bi bi-graph-up me-2 text-warning"></i>Phonetic Analysis</h6>
+                                <p class="text-muted small">
+                                    Provides detailed similarity scores and transformation chains, 
+                                    showing how each word evolved through the phonetic process.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-4 mt-5 border-top">
+        <div class="container">
+            <div class="text-center text-muted">
+                <small>
+                    <i class="bi bi-translate me-1"></i>
+                    Cross-Language Phonetic Hazer - Powered by Flask & Bootstrap
+                </small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Auto-resize textarea
+        const textarea = document.getElementById('input_text');
+        if (textarea) {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+        }
+
+        // Character counter
+        if (textarea) {
+            const maxLength = parseInt(textarea.getAttribute('maxlength'));
+            const counter = document.createElement('small');
+            counter.className = 'form-text text-muted float-end';
+            textarea.parentNode.appendChild(counter);
+            
+            function updateCounter() {
+                const remaining = maxLength - textarea.value.length;
+                counter.textContent = `${remaining} characters remaining`;
+                counter.className = remaining < 100 ? 'form-text text-warning float-end' : 'form-text text-muted float-end';
+            }
+            
+            textarea.addEventListener('input', updateCounter);
+            updateCounter();
+        }
+
+        // Copy to clipboard function
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                // Show success feedback
+                const btn = event.target.closest('button');
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<i class="bi bi-check"></i>';
+                btn.classList.remove('btn-outline-success');
+                btn.classList.add('btn-success');
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.classList.remove('btn-success');
+                    btn.classList.add('btn-outline-success');
+                }, 1500);
+            }).catch(function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>

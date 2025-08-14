@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🌀 Haze - Phonetic Language Drift</title>
+    <link href="https://cdn.replit.com/agent/bootstrap-agent-dark-theme.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Space+Grotesk:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --neon-purple: #8c6a82;
+            --neon-blue: #68869b;
+            --neon-green: #6e858d;
+            --neon-pink: #073657;
+            --neon-orange: #7e7468;
+            --dark-bg: #0a0a0f;
+            --card-bg: #1a1a2e;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0f 0%, #26345c 50%, #616167 100%);
+            font-family: 'Space Grotesk', sans-serif;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated background particles */
+        .bg-particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            background: var(--neon-purple);
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-30px) rotate(120deg); }
+            66% { transform: translateY(15px) rotate(240deg); }
+        }
+
+        /* Glowing text effects */
+        .glow-text {
+            text-shadow: 0 0 20px var(--neon-purple), 0 0 40px var(--neon-purple);
+            animation: pulse-glow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-glow {
+            from { text-shadow: 0 0 20px var(--neon-purple), 0 0 40px var(--neon-purple); }
+            to { text-shadow: 0 0 30px var(--neon-blue), 0 0 60px var(--neon-blue); }
+        }
+
+        /* Neon card styling */
+        .neon-card {
+            background: rgba(26, 26, 46, 0.9) !important;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            position: relative;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .neon-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(183, 148, 246, 0.3);
+        }
+
+        .neon-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-blue), var(--neon-green), var(--neon-pink));
+            border-radius: inherit;
+            z-index: -1;
+            animation: border-glow 4s linear infinite;
+        }
+
+        @keyframes border-glow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        /* Futuristic buttons */
+        .btn-cyber {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-blue));
+            border: none;
+            color: white;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .btn-cyber:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(183, 148, 246, 0.6);
+            color: white;
+        }
+
+        .btn-cyber::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: all 0.5s;
+        }
+
+        .btn-cyber:hover::before {
+            left: 100%;
+        }
+
+        /* Form styling */
+        .form-control, .form-select {
+            background: rgba(26, 26, 46, 0.8) !important;
+            border: 2px solid rgba(183, 148, 246, 0.3);
+            color: white;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 20px rgba(183, 148, 246, 0.3);
+            background: rgba(26, 26, 46, 0.9) !important;
+            color: white;
+        }
+
+        /* Results styling */
+        /* Results styling */
+        .result-text {
+            color: #262729;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+        @keyframes text-glow {
+            from { filter: brightness(1); }
+            to { filter: brightness(1.3); }
+        }
+
+        /* Stat cards */
+        .stat-card {
+            background: rgba(26, 26, 46, 0.8);
+            border: 1px solid rgba(183, 148, 246, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+            border-color: var(--dark-b);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--neon-purple), transparent);
+            animation: rotate 3s linear infinite;
+            opacity: 0.1;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Word variation styling */
+        .variation-item {
+            background: rgba(26, 26, 46, 0.6) !important;
+            border: 1px solid rgba(183, 148, 246, 0.2);
+            transition: all 0.3s ease;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .variation-item:hover {
+            background: rgba(183, 148, 246, 0.1) !important;
+            border-color: var(--dark-b);
+            transform: translateX(5px);
+        }
+
+        /* Typography */
+        .display-4 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+        }
+
+        .lead {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 300;
+        }
+
+        /* Fun icons */
+        .fun-icon {
+            animation: bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        /* Copy button effect */
+        .copy-btn {
+            background: rgba(104, 211, 145, 0.2);
+            border: 1px solid var(--neon-green);
+            color: var(--neon-green);
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: var(--neon-green);
+            color: #000;
+            box-shadow: 0 0 20px rgba(104, 211, 145, 0.5);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .display-4 { font-size: 2rem; }
+            .neon-card { margin-bottom: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-particles" id="particles"></div>
+    
+    <div class="container py-4">
+        <!-- Header -->
+        <div class="row mb-5">
+            <div class="col">
+                <h1 class="display-4 text-center mb-3 glow-text">
+                    <i class="bi bi-hurricane fun-icon me-3"></i>
+                    HAZE
+                    <i class="bi bi-magic fun-icon ms-3"></i>
+                </h1>
+                <p class="lead text-center" style="color: var(--neon-blue);">
+                    <span style="color: var(--neon-purple);">[</span> 
+
+                    <span style="color: var(--neon-purple);">]</span>
+                </p>
+                <div class="text-center">
+                    <small class="text-muted" style="font-family: 'JetBrains Mono', monospace;">
+                        // Break your wor(l)ds
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show neon-card" role="alert">
+                        <i class="bi bi-{{ 'exclamation-triangle' if category == 'error' else 'info-circle' }} me-2"></i>
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Input Form -->
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card neon-card mb-4">
+                    <div class="card-header" style="background: rgba(183, 148, 246, 0.1);">
+                        <h5 class="card-title mb-0" style="color: var(--dark-b);">
+                            <i class="bi bi-keyboard me-2"></i>
+                            HAZER
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="/">
+                            <!-- Language Selection -->
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="lang_a" class="form-label" style="color: var(--dark-b); font-weight: 700;">
+                                        <i class="bi bi-play-circle me-1"></i> SOURCE LANGUAGE:
+                                    </label>
+                                    <select class="form-select" id="lang_a" name="lang_a" required>
+                                        {% if languages %}
+                                            {% for key, value in languages.items() %}
+                                                <option value="{{ key }}" {{ 'selected' if lang_a == key else '' }}>{{ value }}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value="english" selected>English</option>
+                                            <option value="spanish">Spanish</option>
+                                            <option value="french">French</option>
+                                            <option value="german">German</option>
+                                            <option value="italian">Italian</option>
+                                            <option value="portuguese">Portuguese</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="lang_b" class="form-label" style="color: var(--dark-b); font-weight: 700;">
+                                        <i class="bi bi-arrow-left-right me-1"></i> BRIDGE LANGUAGE:
+                                    </label>
+                                    <select class="form-select" id="lang_b" name="lang_b" required>
+                                        {% if languages %}
+                                            {% for key, value in languages.items() %}
+                                                <option value="{{ key }}" {{ 'selected' if lang_b == key else '' }}>{{ value }}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            <option value="english">English</option>
+                                            <option value="spanish" selected>Spanish</option>
+                                            <option value="french">French</option>
+                                            <option value="german">German</option>
+                                            <option value="italian">Italian</option>
+                                            <option value="portuguese">Portuguese</option>
+                                        {% endif %}
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <!-- Hidden method field -->
+                            <input type="hidden" name="method" value="hybrid">
+                            
+                            <!-- Text Input -->
+                            <div class="mb-4">
+                                <label for="input_text" class="form-label" style="color: var(--dark-b); font-weight: 700;">
+                                    <i class="bi bi-code me-1"></i> ENTER TEXT:
+                                </label>
+                                <textarea 
+                                    class="form-control" 
+                                    id="input_text" 
+                                    name="input_text" 
+                                    rows="4" 
+                                    placeholder="Type your text here and watch it transform through linguistic chaos..."
+                                    maxlength="5000"
+                                    required>{{ input_text if input_text else '' }}</textarea>
+                                <div class="form-text" style="color: var(--dark-b);">
+                                    <i class="bi bi-lightning me-1"></i>
+                                    Max 5,000 chars
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                                <button type="submit" class="btn btn-cyber btn-lg px-5">
+                                    <i class="bi bi-magic fun-icon ms-3"></i>
+                                    HAZE!
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        {% if results %}
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card neon-card">
+                    <div class="card-header d-flex justify-content-between align-items-center" style="background: rgba(104, 211, 145, 0.1);">
+                        <h5 class="card-title mb-0" style="color: var(--dark-b);">
+                            <i class="bi bi-hurricane fun-icon me-3"></i>
+                            HAZED!
+                        </h5>
+                        <small class="text-muted" style="font-family: 'JetBrains Mono', monospace;">
+                            <i class="bi bi-bar-chart me-1"></i>
+                            {{ results.word_count }} words processed
+                        </small>
+                    </div>
+                    <div class="card-body">
+                        {% if results.error %}
+                            <div class="alert alert-danger neon-card">
+                                <i class="bi bi-exclamation-triangle me-2"></i>
+                                {{ results.error }}
+                            </div>
+                        {% else %}
+                            <!-- Transformed Text Result -->
+                            {% if results.transformed_text %}
+                            <div class="alert alert-success neon-card mb-4" style="background: rgba(104, 211, 145, 0.1); border-color: var(--neon-green);">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="alert-heading mb-3" style="color: var(--dark-b);">
+                                            <i class="bi bi-check-circle me-2"></i>
+                                            NEW TEXT:
+                                        </h6>
+                                        <p class="mb-3 result-text">{{ results.transformed_text }}</p>
+                                        <small style="color: var(--dark-b); font-family: 'JetBrains Mono', monospace;">
+                                            <i class="bi bi-diagram-3 me-1"></i>
+                                            Route: {{ results.language_route }}
+                                        </small>
+                                    </div>
+                                    <button class="btn copy-btn btn-sm" onclick="copyToClipboard('{{ results.transformed_text }}')">
+                                        <i class="bi bi-clipboard"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Summary Statistics -->
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <div class="card stat-card text-center">
+                                        <div class="card-body position-relative">
+                                            <h6 class="card-title" style="color: var(--dark-b);"></h6>
+                                            <h4 style="color: var(--neon-purple); font-family: 'JetBrains Mono', monospace;">
+                                                {{ results.summary.total_variations }}
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card stat-card text-center">
+                                        <div class="card-body position-relative">
+                                            <h6 class="card-title" style="color: var(--neon-green);">WORDS MUTATED</h6>
+                                            <h4 style="color: var(--dark-b); font-family: 'JetBrains Mono', monospace;">
+                                                {{ results.word_count }}
+                                            </h4>
+                                        </div>
+                                    </div>
+                                </div>
+ 
+                            </div>
+
+                            <!-- Word-by-Word Results -->
+                            <div class="row">
+                                {% for word_result in results.processed_words %}
+                                <div class="col-lg-6 mb-4">
+                                    <div class="card neon-card h-100">
+                                        <div class="card-header" style="background: rgba(183, 148, 246, 0.1);">
+                                            <h6 class="mb-0" style="color: var(--dark-b); font-family: 'JetBrains Mono', monospace;">
+                                                <i class="bi bi-code-slash me-1"></i>
+                                                "{{ word_result.original }}"
+                                            </h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="variations-list">
+                                                {% for variation in word_result.variations %}
+                                                <div class="variation-item mb-2 p-3 rounded">
+                                                    <div class="d-flex justify-content-between align-items-center">
+                                                        <span class="variation-text" style="color: var(--neon-blue);">{{ variation.text }}</span>
+                                                        <div class="metrics">
+                                                            <span class="badge bg-{{ 'success' if variation.confidence == 'Original' else 'primary' if variation.confidence == 'High' else 'warning' if variation.confidence == 'Medium' else 'secondary' }} me-1">
+                                                                {{ variation.confidence }}
+                                                            </span>
+                                                            <small style="color: var(--neon-orange);">{{ "%.1f%%" | format(variation.similarity * 100) }}</small>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {% endfor %}
+                                                {% if word_result.transformation_chain %}
+                                                <div class="mt-3 pt-2 border-top" style="border-color: rgba(183, 148, 246, 0.3) !important;">
+                                                    <small style="color:#262729; font-family: 'JetBrains Mono', monospace;">
+                                                        <i class="bi bi-diagram-2 me-1"></i>
+                                                        <strong>Chain:</strong> {{ word_result.transformation_chain }}
+                                                    </small>
+                                                </div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- About Section -->
+        {% if not results %}
+        <div class="row mt-5">
+            <div class="col-lg-10 mx-auto">
+                <div class="card neon-card">
+                    <div class="card-header text-center" style="background: rgba(246, 173, 85, 0.1);">
+                        <h5 class="card-title mb-0" style="color: var(--neon-orange);">
+                            <i class="bi bi-lightbulb me-2"></i>
+                            HOW THE MAGIC WORKS
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row text-center">
+                            <div class="col-md-6 mb-4">
+                                <div class="p-4">
+                                    <i class="bi bi-arrow-left-right" style="font-size: 3rem; color: var(--neon-purple);"></i>
+                                    <h6 class="mt-3" style="color: var(--neon-purple);"></h6>
+                                    <p class="text-muted small">
+                                        Your text takes a wild ride through different languages, 
+                                        getting scrambled by phonetic rules and coming back... changed.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mb-4">
+                                <div class="p-4">
+                                    <i class="bi bi-globe2" style="font-size: 3rem; color: var(--neon-blue);"></i>
+                                    <h6 class="mt-3" style="color: var(--neon-blue);">MULTI-LANGUAGE SUPPORT</h6>
+                                    <p class="text-muted small">
+                                        Works with English, Spanish, French, German, Italian, and Portuguese. 
+                                        Each language adds its own flavor to the chaos.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-center mt-4">
+                            <p style="color: var(--neon-green); font-family: 'JetBrains Mono', monospace;">
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-4 mt-5" style="border-top: 1px solid rgba(183, 148, 246, 0.3);">
+        <div class="container">
+            <div class="text-center">
+                <small style="color: var(--neon-purple); font-family: 'JetBrains Mono', monospace;">
+                    <i class="bi bi-code-square me-1"></i>
+                    HAZE v1.0
+                </small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Create animated background particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const colors = ['#b794f6', '#63b3ed', '#68d391', '#f687b3', '#f6ad55'];
+            
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.width = Math.random() * 6 + 2 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // Auto-resize textarea with glow effect
+        const textarea = document.getElementById('input_text');
+        if (textarea) {
+            textarea.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = this.scrollHeight + 'px';
+            });
+
+            textarea.addEventListener('focus', function() {
+                this.style.boxShadow = '0 0 30px rgba(183, 148, 246, 0.4)';
+            });
+
+            textarea.addEventListener('blur', function() {
+                this.style.boxShadow = '0 0 20px rgba(183, 148, 246, 0.2)';
+            });
+        }
+
+        // Enhanced character counter with warnings
+        if (textarea) {
+            const maxLength = parseInt(textarea.getAttribute('maxlength'));
+            const counter = document.createElement('small');
+            counter.className = 'form-text text-muted float-end';
+            counter.style.fontFamily = "'JetBrains Mono', monospace";
+            textarea.parentNode.appendChild(counter);
+            
+            function updateCounter() {
+                const remaining = maxLength - textarea.value.length;
+                const percentage = (textarea.value.length / maxLength) * 100;
+                
+                if (percentage > 90) {
+                    counter.textContent = `⚠️ ${remaining} chars left!`;
+                    counter.className = 'form-text text-danger float-end';
+                } else if (percentage > 75) {
+                    counter.textContent = `⚡ ${remaining} chars remaining`;
+                    counter.className = 'form-text text-warning float-end';
+                } else {
+                    counter.textContent = `📝 ${remaining} chars available`;
+                    counter.className = 'form-text text-muted float-end';
+                }
+            }
+            
+            textarea.addEventListener('input', updateCounter);
+            updateCounter();
+        }
+
+        // Enhanced copy to clipboard with fun feedback
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                const btn = event.target.closest('button');
+                const originalHTML = btn.innerHTML;
+                
+                // Fun success animation
+                btn.innerHTML = '<i class="bi bi-check-circle"></i> COPIED!';
+                btn.style.background = 'var(--neon-green)';
+                btn.style.color = '#000';
+                btn.style.transform = 'scale(1.1)';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                    btn.style.background = 'rgba(104, 211, 145, 0.2)';
+                    btn.style.color = 'var(--neon-green)';
+                    btn.style.transform = 'scale(1)';
+                }, 2000);
+            }).catch(function(err) {
+                console.error('Copy failed:', err);
+                const btn = event.target.closest('button');
+                btn.innerHTML = '<i class="bi bi-x-circle"></i> FAILED';
+                btn.style.background = 'var(--neon-pink)';
+                setTimeout(() => {
+                    btn.innerHTML = '<i class="bi bi-clipboard"></i>';
+                    btn.style.background = 'rgba(104, 211, 145, 0.2)';
+                }, 2000);
+            });
+        }
+
+        // Form submission with loading state
+        const form = document.querySelector('form');
+        if (form) {
+            form.addEventListener('submit', function() {
+                const submitBtn = form.querySelector('button[type="submit"]');
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>PROCESSING...';
+                submitBtn.disable

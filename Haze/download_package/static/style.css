@@ -1,0 +1,202 @@
+/* Custom styles for the Phonetic Fuzzing Tool */
+
+/* Ensure proper spacing and layout */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main content area */
+.container {
+    flex: 1;
+}
+
+/* Textarea auto-resize and focus styles */
+#input_text {
+    resize: vertical;
+    min-height: 120px;
+    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+#input_text:focus {
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+/* Variation items styling */
+.variation-item {
+    transition: all 0.2s ease-in-out;
+    border: 1px solid transparent;
+}
+
+.variation-item:hover {
+    border-color: var(--bs-border-color);
+    transform: translateY(-1px);
+}
+
+/* Monospace text for phonetic variations */
+.variation-text {
+    font-family: 'SF Mono', Monaco, Consolas, 'Roboto Mono', monospace;
+    font-size: 0.9em;
+    letter-spacing: 0.5px;
+}
+
+/* Badge hover effects */
+.badge {
+    transition: all 0.2s ease-in-out;
+}
+
+.badge:hover {
+    transform: scale(1.05);
+}
+
+/* Card hover effects for better interactivity */
+.card {
+    transition: box-shadow 0.15s ease-in-out;
+}
+
+.card:hover {
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Statistics cards styling */
+.card.bg-secondary .card-body h4 {
+    margin-bottom: 0;
+    font-weight: 600;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .display-4 {
+        font-size: 2rem;
+    }
+    
+    .lead {
+        font-size: 1rem;
+    }
+    
+    .col-md-4 {
+        margin-bottom: 1rem;
+    }
+    
+    .variation-item {
+        font-size: 0.9rem;
+    }
+    
+    .variation-item .d-flex {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .variation-item .metrics {
+        margin-top: 0.5rem;
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+}
+
+/* Loading spinner for form submission */
+.btn:disabled {
+    position: relative;
+}
+
+.btn:disabled::after {
+    content: "";
+    position: absolute;
+    width: 16px;
+    height: 16px;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -8px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: currentColor;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Alert styling improvements */
+.alert {
+    border: none;
+    border-left: 4px solid;
+}
+
+.alert-danger {
+    border-left-color: var(--bs-danger);
+    background-color: rgba(220, 53, 69, 0.1);
+}
+
+.alert-warning {
+    border-left-color: var(--bs-warning);
+    background-color: rgba(255, 193, 7, 0.1);
+}
+
+.alert-info {
+    border-left-color: var(--bs-info);
+    background-color: rgba(13, 202, 240, 0.1);
+}
+
+/* Footer styling */
+footer {
+    margin-top: auto;
+}
+
+/* Improve form validation styling */
+.form-control:invalid {
+    border-color: var(--bs-danger);
+}
+
+.form-control:valid {
+    border-color: var(--bs-success);
+}
+
+/* Custom scrollbar for webkit browsers */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bs-gray-800);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--bs-gray-600);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--bs-gray-500);
+}
+
+/* Ensure proper contrast for text */
+.text-muted {
+    opacity: 0.8;
+}
+
+/* Animation for results appearing */
+.card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Stagger animation for multiple cards */
+.card:nth-child(2) { animation-delay: 0.1s; }
+.card:nth-child(3) { animation-delay: 0.2s; }
+.card:nth-child(4) { animation-delay: 0.3s; }
