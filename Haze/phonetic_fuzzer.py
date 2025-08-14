@@ -6,15 +6,21 @@ Transform between any two languages without English intermediary
 
 import difflib
 import re
+import os
 from anthropic import Anthropic
 from deep_translator import GoogleTranslator
 from typing import List, Tuple, Optional
 
 
-# Setup
-anthropic = Anthropic(
-    api_key="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"
-)
+# Get API key from environment variable
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY")
+
+
+def get_api_key():
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise ValueError("ANTHROPIC_API_KEY environment variable is required")
+    return api_key
 
 
 class Hazer:
@@ -1628,15 +1634,17 @@ class Hazer:
         prompt = (
             "could you build a MINIMALLY coherent phrase in "
             + lang_a
-            + "that contains ALL of the words here in the exact order in which they appear."
+            + "that contains ALL of the words here in the exact order in which they appear:"
             + text
-            + "Just the basic semantic connectors and reordering needed that could give narrative sense to the text in said language. DO NOT ADD NOUNS"
+            + "Just add (if needed) the basic semantic connectors and reordering that could give narrative sense to the text in said language. DO NOT ADD NOUNS."
             + 'Please JUST the resulting text, without quotations, do not introduce the text or say ANYTHING ELSE suchas "Here s a coherent phrase using those elements: balala. Always give back the same result for the same initial input."'
         )
         if len(text.split()) < 3:
             return text
         else:
             try:
+                api_key = get_api_key()
+                anthropic = Anthropic(api_key=api_key)
                 response = anthropic.messages.create(
                     model="claude-sonnet-4-20250514",
                     max_tokens=50,
